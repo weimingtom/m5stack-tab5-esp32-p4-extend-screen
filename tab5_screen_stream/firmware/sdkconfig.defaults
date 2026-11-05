@@ -1,0 +1,61 @@
+# Defaults for the M5Stack Tab5 (ESP32-P4) PC-screen receiver.
+#
+# Apply on top of the chip defaults:
+#   idf.py set-target esp32p4
+#   idf.py menuconfig      # optional, credentials and link choice
+#   idf.py build
+#
+# Note: changing the ESP32-P4 revision selection below needs a
+# `idf.py fullclean` before it takes effect.
+
+## ---------------------------------------------------------------- target ----
+CONFIG_IDF_TARGET="esp32p4"
+
+## ---- chip revision ----------------------------------------------------------
+# Tab5 units ship ESP32-P4 revision v1.0, which ESP-IDF treats as a *separate*
+# silicon generation from rev >= 3.0.  With the defaults below the image boots
+# on rev 1.x boards.  If your board reports rev 3.x, delete these two lines (and
+# add CONFIG_ESP32P4_REV_MIN_301=y) and rebuild from clean.
+CONFIG_ESP32P4_SELECTS_REV_LESS_V3=y
+CONFIG_ESP32P4_REV_MIN_100=y
+
+## ------------------------------------------------------------------ flash ----
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+## ------------------------------------------------------------------ psram ----
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_HEX=y
+CONFIG_SPIRAM_SPEED_200M=y
+
+## ---------------------------------------------------------------- console ----
+# The USB-Serial/JTAG peripheral is used as the data link, so it must not be
+# claimed by the console: logs are forwarded to the PC as "LOG ..." lines, and
+# `idf.py monitor` is only used for flashing.  To get normal console output,
+# switch to CONFIG_ESP_CONSOLE_UART_DEFAULT (UART0 on GPIO37/38, the M5-Bus
+# pins) - the USB link keeps working because it does not use UART0.
+CONFIG_ESP_CONSOLE_NONE=y
+CONFIG_ESP_CONSOLE_SECONDARY_NONE=y
+
+## ------------------------------------------------------------- scheduler ----
+CONFIG_FREERTOS_HZ=1000
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+
+## --------------------------------------------------------------- display ----
+# Two DPI frame buffers: decode into the back buffer, then let the panel switch.
+CONFIG_BSP_LCD_DPI_BUFFER_NUMS=2
+CONFIG_BSP_LCD_USE_DMA2D=y
+
+## ------------------------------------------------------------------- link ----
+# USB-Serial/JTAG is the Kconfig default.  For the Wi-Fi/TCP build either use
+# `idf.py menuconfig` -> "Tab5 screen stream" -> "Wi-Fi + TCP", or build with
+#   idf.py -B build-wifi -D SDKCONFIG=sdkconfig.wifi \
+#          -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.wifi" build
+# (the pins below come from the ESP-Hosted Tab5 board profile).
+
+## ------------------------------------------------ ESP-Hosted (Wi-Fi only) ----
+# The Tab5's coprocessor is an ESP32-C6 wired over SDIO.  The esp_hosted board
+# profile below selects the right pins, so nothing has to be wired by hand.
+# These options only take effect in the Wi-Fi/TCP configuration, so they live in
+# sdkconfig.defaults.wifi.

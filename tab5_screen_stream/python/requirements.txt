@@ -1,0 +1,7 @@
+# PC-side dependencies for python/screen_stream.py
+Pillow>=10.0      # capture fallback, scaling, JPEG encoding
+mss>=9.0          # fast screen capture, multi-monitor support
+pyserial>=3.5     # USB-Serial/JTAG link
+
+# optional, only needed for `--codec rgb565` (numpy packs RGB565 much faster)
+numpy>=1.24

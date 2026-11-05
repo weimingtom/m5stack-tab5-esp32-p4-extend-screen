@@ -1,0 +1,10 @@
+# Partition table for the Tab5 screen receiver (16 MB flash).
+#
+# The default 1 MB factory partition is too small once the BSP, the DSI driver
+# and the JPEG decoder are linked, so the app gets 4 MB and the rest of the
+# flash is left free (for example for storing ESP-Hosted coprocessor firmware).
+#
+# Name,   Type, SubType, Offset,   Size
+nvs,      data, nvs,     0x9000,   0x6000,
+phy_init, data, phy,     0xf000,   0x1000,
+factory,  app,  factory, 0x10000,  0x400000,

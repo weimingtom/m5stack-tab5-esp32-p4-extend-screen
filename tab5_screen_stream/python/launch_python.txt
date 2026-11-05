@@ -1,0 +1,3 @@
+C:\python310\python.exe -m pip install --upgrade pip
+C:\python310\python.exe -m pip install -r requirements.txt
+C:\python310\python.exe screen_stream.py --serial COM8

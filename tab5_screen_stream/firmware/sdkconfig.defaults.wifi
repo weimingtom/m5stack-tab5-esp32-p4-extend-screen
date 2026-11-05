@@ -1,0 +1,25 @@
+# Extra defaults for the Wi-Fi/TCP build.
+#
+#   idf.py -B build-wifi -D IDF_TARGET=esp32p4 \
+#          -D SDKCONFIG=sdkconfig.wifi \
+#          -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.wifi" build
+#
+# or simply enable "Wi-Fi + TCP" in `idf.py menuconfig`.  Replace the
+# credentials with your own before flashing.
+CONFIG_APP_LINK_TCP=y
+CONFIG_APP_WIFI_SSID="myssid"
+CONFIG_APP_WIFI_PASSWORD="mypassword"
+CONFIG_APP_TCP_PORT=8266
+
+## ------------------------------------------------ ESP-Hosted (Wi-Fi only) ----
+# P4 has no radio: esp_wifi_remote forwards esp_wifi to the ESP32-C6 over SDIO.
+CONFIG_ESP_WIFI_REMOTE_ENABLED=y
+CONFIG_ESP_HOSTED_ENABLED=y
+CONFIG_SLAVE_IDF_TARGET_ESP32C6=y
+CONFIG_ESP_HOSTED_CP_TARGET_ESP32C6=y
+
+# Board profile for the Tab5's on-board C6: gives CLK=12, CMD=13, D0..D3=11..8,
+# active-low reset on GPIO15 and the SDIO interrupt on GPIO14.
+CONFIG_ESP32P4_TAB5_C6_BOARD=y
+CONFIG_ESP_HOSTED_SDIO_HOST_INTERFACE=y
+CONFIG_ESP_HOSTED_SDIO_4_BIT_BUS=y

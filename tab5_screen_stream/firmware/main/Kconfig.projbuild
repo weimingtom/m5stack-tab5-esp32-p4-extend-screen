@@ -1,0 +1,73 @@
+menu "Tab5 screen stream"
+
+    choice APP_LINK
+        prompt "Link between the PC and the Tab5"
+        default APP_LINK_USB
+        help
+            USB needs nothing beyond the cable you already flash with.
+            Wi-Fi needs the ESP32-C6 coprocessor to run ESP-Hosted firmware.
+        config APP_LINK_USB
+            bool "USB-Serial/JTAG (USB-C cable, no extra setup)"
+        config APP_LINK_TCP
+            bool "Wi-Fi + TCP (needs ESP-Hosted firmware on the C6)"
+    endchoice
+
+    config APP_USB_RX_BUFFER_KB
+        int "USB receive ring buffer (KB)"
+        depends on APP_LINK_USB
+        default 32
+        range 4 64
+        help
+            Larger buffers absorb bursts from the PC while the decoder catches up.
+
+    config APP_WIFI_SSID
+        string "Wi-Fi SSID"
+        depends on APP_LINK_TCP
+        default "myssid"
+
+    config APP_WIFI_PASSWORD
+        string "Wi-Fi password"
+        depends on APP_LINK_TCP
+        default "mypassword"
+
+    config APP_WIFI_TIMEOUT_S
+        int "Seconds to wait for an IP address"
+        depends on APP_LINK_TCP
+        default 30
+        range 5 120
+
+    config APP_WIFI_MAX_RETRY
+        int "Reconnect attempts before giving up"
+        depends on APP_LINK_TCP
+        default 10
+        range 1 100
+
+    config APP_TCP_PORT
+        int "TCP port the Tab5 listens on"
+        depends on APP_LINK_TCP
+        default 8266
+        range 1024 65535
+
+    config APP_PAYLOAD_BUFFER_KB
+        int "PSRAM per frame slot (KB)"
+        default 512
+        range 64 2048
+        help
+            Two slots are allocated, so 512 KB means 1 MB of PSRAM. A 1280x720
+            JPEG at quality 70 is typically 80-150 KB. Raw RGB565 frames need
+            width * height * 2 bytes: 1800 KB for the full panel (a raw frame
+            larger than this slot is rejected).
+
+    config APP_STATS_INTERVAL_MS
+        int "Milliseconds between STAT lines"
+        default 1000
+        range 200 10000
+
+    config APP_JPEG_RGB_ORDER_RGB
+        bool "JPEG decoder emits RGB order instead of BGR"
+        default n
+        help
+            The P4 decoder writes RGB565 either byte-swapped (BGR, the default
+            that matches the DSI frame buffer) or not. If red and blue look
+            swapped on the panel, toggle this.
+endmenu

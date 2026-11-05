@@ -1,0 +1,19 @@
+# ESP-IDF build outputs
+firmware/build/
+firmware/build-*/
+#firmware/sdkconfig
+#firmware/sdkconfig.old
+#firmware/sdkconfig.wifi
+#firmware/managed_components/
+#firmware/dependencies.lock
+firmware/.build-logs/
+
+# local scratch (build logs, downloaded reference sources)
+.build-logs/
+
+# PC-side virtualenv and test artefacts
+.venv/
+frames.bin
+first.png
+__pycache__/
+*.pyc

@@ -1,0 +1,27 @@
+## Dependencies for the Tab5 PC-screen receiver.
+##
+## * `m5stack_tab5_noglib` brings up the 5" 720x1280 MIPI-DSI panel (ILI9881C, or
+##   ST7121/ST7123 on later board revisions), the backlight, the IO expanders and
+##   the C6/USB power switches.  The `_noglib` flavour is used because no LVGL is
+##   needed: decoded frames go straight into the DPI frame buffer.
+##
+## * `esp_hosted` + `esp_wifi_remote` provide the `esp_wifi` API on the P4 by
+##   forwarding it to the on-board ESP32-C6 over SDIO.  They are only *used* when
+##   CONFIG_APP_LINK_TCP is selected (main/CMakeLists.txt decides that), but the
+##   component manager always resolves manifests, so they are downloaded either
+##   way - ESP-IDF then compiles them in both configurations.
+##
+##   esp_hosted is pinned to 2.13.x on purpose: it ships the "M5Stack Tab5 with
+##   on-board ESP32-C6" board profile (SDIO CLK=12, CMD=13, D0..D3=11..8,
+##   active-low reset on GPIO15).  v3.x has the same profile but nests deeper than
+##   the 260-character Windows path limit, so the component manager fails to
+##   unpack it on Windows.
+dependencies:
+  idf:
+    version: ">=5.5"
+  espressif/m5stack_tab5_noglib:
+    version: "^1.0"
+  espressif/esp_hosted:
+    version: "^2.13"
+  espressif/esp_wifi_remote:
+    version: "^1.6"
